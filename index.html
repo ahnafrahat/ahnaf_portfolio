@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ahnaf Rahat's Portfolio</title>
+    <title>Ahnaf's Portfolio</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 512'><path d='M128 32C92.7 32 64 60.7 64 96V352h64V96H512V352h64V96c0-35.3-28.7-64-64-64H128zM19.2 384C8.6 384 0 392.6 0 403.2C0 445.6 34.4 480 76.8 480H563.2c42.4 0 76.8-34.4 76.8-76.8c0-10.6-8.6-19.2-19.2-19.2H19.2z'/></svg>" type="image/svg+xml">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -11,14 +12,15 @@
 <body>
     <nav>
         <div class="nav-brand">
-            <img src="assets/logo.png" alt="Logo" class="logo">
+            <i class="fas fa-code"></i>
+            <span>Ahnaf Rahat</span>
         </div>
         <div class="nav-links">
             <a href="#overview">Overview</a>
-            <a href="#education">Education</a>
-            <a href="#experience">Experience</a>
             <a href="#skills">Skills</a>
+            <a href="#experience">Experience</a>
             <a href="#projects">Projects</a>
+            <a href="#education">Education</a>
             <a href="#contact">Contact</a>
         </div>
     </nav>
@@ -66,109 +68,6 @@
                 <div class="overview-item">
                     <span class="emoji">💡</span>
                     <p>I'm always curious and constantly learning.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="education" class="section">
-        <h2 class="section-title">Education.</h2>
-        <div class="education-card">
-            <div class="education-content">
-                <h3>Bachelor in Computer Science and Engineering</h3>
-                <p class="institution">North South University</p>
-                <div class="education-details">
-                    <p class="duration">2019 - 2023</p>
-                    <p class="location">Dhaka, Bangladesh</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="experience" class="section">
-        <h2 class="section-title">Work Experience.</h2>
-        <div class="timeline">
-            <div class="timeline-item">
-                <div class="timeline-dot" data-date="2023 - Present"></div>
-                <div class="timeline-content">
-                    <img src="assets/seekr_logo.webp" alt="Seekr Logo" class="company-logo">
-                    <p class="company">Seekr</p>
-                    <h3>iOS Developer</h3>
-                    <p class="duration">2023 - Present</p>
-                    <div class="work-details">
-                        <p>Implemented AI-based solutions for visually impaired people using ultralytics Yolov8 Model and Vision framework.</p>
-                        <a href="https://apps.apple.com/us/app/seekr-ai/id6470461667" class="project-link" target="_blank">View Website →</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="timeline-item">
-                <div class="timeline-dot" data-date="2022 - 2023"></div>
-                <div class="timeline-content">
-                    <img src="assets/kotha.png" alt="Kotha Logo" class="company-logo">
-                    <p class="company">Kotha Apps & Technologies Ltd</p>
-                    <h3>iOS Developer</h3>
-                    <p class="duration">2022 - 2023</p>
-                    <div class="work-details">
-                        <p>Implemented real-time audio/video calling using WebRTC and real-time messaging using Socket.IO.</p>
-                        <a href="https://apps.apple.com/us/app/kotha/id1188060798" class="project-link" target="_blank">View Website →</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="timeline-item">
-                <div class="timeline-dot" data-date="2021 - 2022"></div>
-                <div class="timeline-content">
-                    <img src="assets/white_label.png" alt="WhiteLabel Logo" class="company-logo">
-                    <p class="company">WhiteLabel Games</p>
-                    <h3>Co-founder & Game Developer</h3>
-                    <p class="duration">2021 - 2022</p>
-                    <div class="work-details">
-                        <p>Co-founded marketing-focused Advergame development company.</p>
-                        <a href="https://playwhitelabel.com" class="project-link" target="_blank">View Website →</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="timeline-item">
-                <div class="timeline-dot" data-date="2020 - 2021"></div>
-                <div class="timeline-content">
-                    <img src="assets/auctionvilla.png" alt="AuctionVilla Logo" class="company-logo">
-                    <p class="company">AuctionVilla OÜ</p>
-                    <h3>Co-founder & VP Product</h3>
-                    <p class="duration">2020 - 2021</p>
-                    <div class="work-details">
-                        <p>Co-founded Digital Assets Marketplace in Estonia.</p>
-                        <a href="https://auctionvilla.io/" class="project-link" target="_blank">View Website →</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="timeline-item">
-                <div class="timeline-dot" data-date="2019 - 2020"></div>
-                <div class="timeline-content">
-                    <img src="assets/nougat.png" alt="Nougat Logo" class="company-logo">
-                    <p class="company">Nougat Technologies</p>
-                    <h3>iOS Developer</h3>
-                    <p class="duration">2019 - 2020</p>
-                    <div class="work-details">
-                        <p>Developed and maintained Sokoni Kwetu E-Commerce app using Swift and Firebase.</p>
-                        <a href="https://apps.apple.com/us/app/sokoni-kwetu/id1482431769" class="project-link" target="_blank">View Website →</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="timeline-item">
-                <div class="timeline-dot" data-date="2018 - 2019"></div>
-                <div class="timeline-content">
-                    <img src="assets/nci_game.jpg" alt="NCI Logo" class="company-logo">
-                    <p class="company">NCI Gaming</p>
-                    <h3>Game Developer</h3>
-                    <p class="duration">2018 - 2019</p>
-                    <div class="work-details">
-                        <p>Developed Mackspice iOS app for sustainable spice farming and production brand.</p>
-                        <a href="https://apps.apple.com/us/app/mackspice/id1590196517" class="project-link" target="_blank">View Website →</a>
-                    </div>
                 </div>
             </div>
         </div>
@@ -279,11 +178,101 @@
         </div>
     </section>
 
+    <section id="experience" class="section">
+        <h2 class="section-title">Work Experience.</h2>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-dot" data-date="2024 - Present"></div>
+                <div class="timeline-content">
+                    <img src="assets/seekr_logo.webp" alt="Seekr Logo" class="company-logo">
+                    <p class="company">Seekr</p>
+                    <h3>iOS Developer</h3>
+                    <p class="duration">2024 - Present</p>
+                    <div class="work-details">
+                        <p>Implemented AI-based solutions for visually impaired people using ultralytics Yolov8 Model and Vision framework.</p>
+                        <a href="https://apps.apple.com/us/app/seekr-ai/id6470461667" class="project-link" target="_blank">View Website →</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot" data-date="2022 - 2024"></div>
+                <div class="timeline-content">
+                    <img src="assets/kotha.png" alt="Kotha Logo" class="company-logo">
+                    <p class="company">Kotha Apps & Technologies Ltd</p>
+                    <h3>iOS Developer</h3>
+                    <p class="duration">2022 - 2024</p>
+                    <div class="work-details">
+                        <p>Implemented real-time audio/video calling using WebRTC and real-time messaging using Socket.IO.</p>
+                        <a href="https://apps.apple.com/us/app/kotha/id1188060798" class="project-link" target="_blank">View Website →</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot" data-date="2021 - 2022"></div>
+                <div class="timeline-content">
+                    <img src="assets/white_label.png" alt="WhiteLabel Logo" class="company-logo">
+                    <p class="company">WhiteLabel Games</p>
+                    <h3>Co-founder & Game Developer</h3>
+                    <p class="duration">2021 - 2022</p>
+                    <div class="work-details">
+                        <p>Co-founded marketing-focused Advergame development company.</p>
+                        <a href="https://playwhitelabel.com" class="project-link" target="_blank">View Website →</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot" data-date="2020 - 2021"></div>
+                <div class="timeline-content">
+                    <img src="assets/auctionvilla.png" alt="AuctionVilla Logo" class="company-logo">
+                    <p class="company">AuctionVilla OÜ</p>
+                    <h3>Co-founder & VP Product</h3>
+                    <p class="duration">2020 - 2021</p>
+                    <div class="work-details">
+                        <p>Co-founded Digital Assets Marketplace in Estonia.</p>
+                        <a href="https://auctionvilla.io/" class="project-link" target="_blank">View Website →</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot" data-date="2019 - 2020"></div>
+                <div class="timeline-content">
+                    <img src="assets/nougat.png" alt="Nougat Logo" class="company-logo">
+                    <p class="company">Nougat Technologies</p>
+                    <h3>iOS Developer</h3>
+                    <p class="duration">2019 - 2020</p>
+                    <div class="work-details">
+                        <p>Developed and maintained Sokoni Kwetu E-Commerce app using Swift and Firebase.</p>
+                        <a href="https://apps.apple.com/us/app/sokoni-kwetu/id1482431769" class="project-link" target="_blank">View Website →</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot" data-date="2018 - 2019"></div>
+                <div class="timeline-content">
+                    <img src="assets/nci_game.jpg" alt="NCI Logo" class="company-logo">
+                    <p class="company">NCI Gaming</p>
+                    <h3>Game Developer</h3>
+                    <p class="duration">2018 - 2019</p>
+                    <div class="work-details">
+                        <p>Developed Mackspice iOS app for sustainable spice farming and production brand.</p>
+                        <a href="https://apps.apple.com/us/app/mackspice/id1590196517" class="project-link" target="_blank">View Website →</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
     <section id="projects" class="section">
         <h2 class="section-title">Projects.</h2>
         <div class="projects-grid">
             <div class="project-card">
-                <img src="assets/seekr_logo.webp" alt="Seekr AI">
+                <img src="assets/seekr_banner.png" alt="Seekr AI">
                 <div class="project-content">
                     <h3>Seekr AI</h3>
                     <p>Seekr is a platform working for low sight people. I implemented AI-based solution for visually impaired people using ultralytics Yolov8 Model and Vision framework.</p>
@@ -299,7 +288,7 @@
             </div>
 
             <div class="project-card">
-                <img src="assets/kotha.png" alt="Kotha">
+                <img src="assets/kotha_banner.png" alt="Kotha">
                 <div class="project-content">
                     <h3>Kotha</h3>
                     <p>At Kotha, a Social Communication and Lifestyle app, I implemented realtime audio and video calling feature using Webrtc and realtime messaging using Socket.IO. Also implemented a social marketplace for buying and selling digital products across the app users.</p>
@@ -315,7 +304,7 @@
             </div>
 
             <div class="project-card">
-                <img src="assets/white_label.png" alt="WhiteLabel Games">
+                <img src="assets/whitelabel_banner.png" alt="WhiteLabel Games">
                 <div class="project-content">
                     <h3>WhiteLabel Games</h3>
                     <p>As a co-founder of Whitelabel Game, a marketing-focused Advergame development company, I played an integral role in establishing and shaping the business. Additionally, I worked directly as a game developer, utilizing Construct3, CreateJS, and Javascript frameworks to develop captivating games.</p>
@@ -331,7 +320,7 @@
             </div>
 
             <div class="project-card">
-                <img src="assets/auctionvilla.png" alt="AuctionVilla">
+                <img src="assets/av_banner.png" alt="AuctionVilla">
                 <div class="project-content">
                     <h3>AuctionVilla OÜ</h3>
                     <p>Actionvilla is a distinguished Digital Assets Marketplace in Estonia, specializing in the buying and selling of mobile application ownership. As a co-founder of the company, I played a crucial role in establishing and shaping the business from its inception. Additionally, I served as a product engineer, actively involved in developing and refining our platform.</p>
@@ -347,7 +336,7 @@
             </div>
 
             <div class="project-card">
-                <img src="assets/nougat.png" alt="Sokoni Kwetu">
+                <img src="assets/sokoni_banner.png" alt="Sokoni Kwetu">
                 <div class="project-content">
                     <h3>Sokoni Kwetu</h3>
                     <p>I developed, published, and maintained Sokoni Kwetu, an E-Commerce app designed to simplify people's lives. This app was built using Swift and integrated with various technologies, including Firebase Authentication, Firebase Firestore, and RestAPIs. Incorporated third-party libraries such as Alamofire and Realm.</p>
@@ -363,7 +352,7 @@
             </div>
 
             <div class="project-card">
-                <img src="assets/nci_game.jpg" alt="Mackspice">
+                <img src="assets/mackspice_banner.png" alt="Mackspice">
                 <div class="project-content">
                     <h3>Mackspice</h3>
                     <p>Mackspice is a sustainable spice farming and production brand that sells high-quality spice produced by its rural smallholder farmers, empowering them to take control of their own lives. I successfully developed the iOS app, ensuring its seamless functionality, intuitive user experience, and robust performance.</p>
@@ -380,31 +369,56 @@
         </div>
     </section>
 
-    <section id="contact" class="section">
-        <h2 class="section-title">Contact.</h2>
-        <div class="contact-container">
-            <form class="contact-form">
-                <div class="form-group">
-                    <label for="name">Name</label>
-                    <input type="text" id="name" required>
+    <section id="education" class="section">
+        <h2 class="section-title">Education.</h2>
+        <div class="education-card">
+            <div class="education-content">
+                <h3>Bachelor in Computer Science and Engineering</h3>
+                <p class="institution">North South University</p>
+                <div class="education-details">
+                    <!-- <p class="duration">2019 - 2023</p>
+                    <p class="location">Dhaka, Bangladesh</p> -->
                 </div>
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" required>
-                </div>
-                <div class="form-group">
-                    <label for="message">Message</label>
-                    <textarea id="message" required></textarea>
-                </div>
-                <button type="submit" class="submit-btn">Send Message</button>
-            </form>
-            <div id="globe-container">
-                <!-- 3D Globe will be rendered here using Three.js -->
             </div>
         </div>
     </section>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <section id="contact" class="section">
+        <h1 class="contact-title">Contact.</h1>
+        <div class="contact-container">
+            <form id="contact-form" class="contact-form">
+                <div class="form-group">
+                    <label for="name">
+                        <i class="fas fa-user"></i>
+                        Name
+                    </label>
+                    <input type="text" id="name" placeholder="Your name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">
+                        <i class="fas fa-envelope"></i>
+                        Email
+                    </label>
+                    <input type="email" id="email" placeholder="Your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">
+                        <i class="fas fa-comment"></i>
+                        Message
+                    </label>
+                    <textarea id="message" placeholder="Hey Ahnaf, I'd like to chat about some opportunities you might like! 🚀" required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">
+                    Send Message
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </form>
+            <div class="communication-animation">
+                <i class="fas fa-comments fa-10x fa-bounce" style="color: #a78bfa;"></i>
+            </div>
+        </div>
+    </section>
+
     <script src="script.js"></script>
     <script>
         const typewriter = document.getElementById('typewriter');
@@ -450,5 +464,25 @@
         // Start the typing animation
         type();
     </script>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="social-icons">
+                <a href="https://wa.me/8801707080447" target="_blank" class="social-icon">
+                    <i class="fab fa-whatsapp"></i>
+                </a>
+                <a href="https://t.me/+8801707080447" target="_blank" class="social-icon">
+                    <i class="fab fa-telegram"></i>
+                </a>
+                <a href="https://discord.com/users/rahat6444" target="_blank" class="social-icon">
+                    <i class="fab fa-discord"></i>
+                </a>
+                <a href="mailto:ahnaf.rahat19@gmail.com" class="social-icon">
+                    <i class="fas fa-envelope"></i>
+                </a>
+            </div>
+            <p class="footer-text">© 2025 Ahnaf Rahat. All rights reserved.</p>
+        </div>
+    </footer>
 </body>
 </html>

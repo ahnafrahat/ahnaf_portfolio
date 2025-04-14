@@ -42,26 +42,38 @@ function initGlobe() {
     renderer.setPixelRatio(window.devicePixelRatio);
     container.appendChild(renderer.domElement);
 
-    // Create globe
-    const geometry = new THREE.SphereGeometry(5, 32, 32);
-    const material = new THREE.MeshPhongMaterial({
-        color: 0x7127ff,
-        transparent: true,
-        opacity: 0.8,
-        wireframe: true
+    // Create sliced sphere
+    const sphereGeometry = new THREE.SphereGeometry(5, 32, 32);
+    const sphereMaterial = new THREE.MeshPhongMaterial({
+        color: 0x1a1b4b,
+        shininess: 100,
+        side: THREE.DoubleSide
     });
-    
-    const globe = new THREE.Mesh(geometry, material);
-    scene.add(globe);
+
+    const slices = 8;
+    const sliceSpacing = 0.5;
+    const sphereSlices = [];
+
+    for (let i = 0; i < slices; i++) {
+        const slice = new THREE.Mesh(sphereGeometry, sphereMaterial);
+        slice.position.y = i * sliceSpacing;
+        slice.scale.set(1 - (i * 0.05), 0.1, 1 - (i * 0.05));
+        sphereSlices.push(slice);
+        scene.add(slice);
+    }
 
     // Add ambient light
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     scene.add(ambientLight);
 
-    // Add point light
-    const pointLight = new THREE.PointLight(0x3b82f6, 1);
-    pointLight.position.set(10, 10, 10);
-    scene.add(pointLight);
+    // Add point lights
+    const pointLight1 = new THREE.PointLight(0x9333ea, 1);
+    pointLight1.position.set(10, 10, 10);
+    scene.add(pointLight1);
+
+    const pointLight2 = new THREE.PointLight(0xe11d48, 1);
+    pointLight2.position.set(-10, -10, -10);
+    scene.add(pointLight2);
 
     // Position camera
     camera.position.z = 15;
@@ -69,7 +81,12 @@ function initGlobe() {
     // Animation
     function animate() {
         requestAnimationFrame(animate);
-        globe.rotation.y += 0.005;
+        
+        sphereSlices.forEach((slice, index) => {
+            slice.rotation.y += 0.01 * (1 + index * 0.1);
+            slice.position.y = Math.sin(Date.now() * 0.001 + index) * 0.2 + (index * sliceSpacing);
+        });
+
         renderer.render(scene, camera);
     }
 
@@ -83,8 +100,30 @@ function initGlobe() {
         renderer.setSize(newWidth, newHeight);
     });
 
+    // Add mouse interaction
+    let mouseX = 0;
+    let mouseY = 0;
+    
+    document.addEventListener('mousemove', (event) => {
+        mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+        mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+    });
+
+    function updateCameraPosition() {
+        camera.position.x += (mouseX * 2 - camera.position.x) * 0.05;
+        camera.position.y += (mouseY * 2 - camera.position.y) * 0.05;
+        camera.lookAt(scene.position);
+    }
+
+    // Combined animation loop
+    function render() {
+        requestAnimationFrame(render);
+        updateCameraPosition();
+        animate();
+    }
+
     // Start animation
-    animate();
+    render();
 }
 
 // Initialize globe when the page loads
