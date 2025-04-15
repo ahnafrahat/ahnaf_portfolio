@@ -129,25 +129,63 @@ function initGlobe() {
 // Initialize globe when the page loads
 window.addEventListener('load', initGlobe);
 
-// Form handling
-const contactForm = document.querySelector('.contact-form');
-contactForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    
-    // Get form data
-    const formData = new FormData(contactForm);
-    const data = Object.fromEntries(formData);
-    
-    // Here you would typically send the data to a server
-    console.log('Form submitted:', data);
-    
-    // Show success message
-    contactForm.innerHTML = `
-        <div style="text-align: center;">
-            <h3 style="color: var(--accent-purple); margin-bottom: 1rem;">Message Sent!</h3>
-            <p>Thanks for reaching out. I'll get back to you soon.</p>
-        </div>
-    `;
+// Initialize Supabase
+function initSupabase() {
+    const SUPABASE_URL = 'https://pfulfohqxvmgygnpzhpl.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBmdWxmb2hxeHZtZ3lnbnB6aHBsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ3MTI1ODksImV4cCI6MjA2MDI4ODU4OX0.5_itajWFlTX1m3bDFYSjLXTPkz_T9cOx6jOAUOuEyLM';
+
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Form handling
+    const contactForm = document.querySelector('.contact-form');
+    contactForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        // Get form data
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const message = document.getElementById('message').value;
+        
+        try {
+            // Insert the message into the message table
+            const { data, error } = await supabaseClient
+                .from('message')
+                .insert([{ name, email, message }]);
+
+            if (error) {
+                throw error;
+            }
+
+            // Show success message
+            contactForm.innerHTML = `
+                <div style="text-align: center;">
+                    <h3 style="color: var(--accent-purple); margin-bottom: 1rem;">Message Sent!</h3>
+                    <p>Thanks for reaching out. I'll get back to you soon.</p>
+                </div>
+            `;
+        } catch (error) {
+            console.error('Error saving message:', error);
+            // Show error message
+            contactForm.innerHTML = `
+                <div style="text-align: center;">
+                    <h3 style="color: #e11d48; margin-bottom: 1rem;">Error!</h3>
+                    <p>Sorry, there was an error sending your message. Please try again later.</p>
+                    <button onclick="window.location.reload()" style="margin-top: 1rem; padding: 0.5rem 1rem; background: var(--accent-purple); color: white; border: none; border-radius: 0.5rem; cursor: pointer;">
+                        Try Again
+                    </button>
+                </div>
+            `;
+        }
+    });
+}
+
+// Wait for the Supabase script to load
+window.addEventListener('load', () => {
+    if (window.supabase) {
+        initSupabase();
+    } else {
+        console.error('Supabase script not loaded');
+    }
 });
 
 // Add parallax effect to hero section
@@ -161,4 +199,30 @@ document.addEventListener('mousemove', (e) => {
         rotateY(${mouseX * 5}deg)
         rotateX(${-mouseY * 5}deg)
     `;
+});
+
+// Burger menu functionality
+const burgerMenu = document.querySelector('.burger-menu');
+const navLinksContainer = document.querySelector('.nav-links-container');
+
+burgerMenu.addEventListener('click', () => {
+    burgerMenu.classList.toggle('active');
+    navLinksContainer.classList.toggle('active');
+});
+
+// Close menu when clicking on a link
+const navLinks = document.querySelectorAll('.nav-links a');
+navLinks.forEach(link => {
+    link.addEventListener('click', () => {
+        burgerMenu.classList.remove('active');
+        navLinksContainer.classList.remove('active');
+    });
+});
+
+// Close menu when clicking outside
+document.addEventListener('click', (e) => {
+    if (!navLinksContainer.contains(e.target) && !burgerMenu.contains(e.target)) {
+        burgerMenu.classList.remove('active');
+        navLinksContainer.classList.remove('active');
+    }
 }); 

@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Messages Dashboard</title>
+  <!-- Updated to properly import Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0a0a1b;
+      --bg-card: #13132f;
+      --text-primary: #ffffff;
+      --text-secondary: #8892b0;
+      --accent-purple: #7127ff;
+      --accent-blue: #3b82f6;
+      --gradient-primary: linear-gradient(135deg, #7127ff, #3b82f6);
+      --danger: #ef4444;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-primary);
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+      padding: 20px;
+      background-color: var(--bg-card);
+      border-radius: 20px;
+      box-shadow: 0 0 30px rgba(113, 39, 255, 0.1);
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .btn {
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .refresh-btn {
+      background: var(--gradient-primary);
+      color: white;
+    }
+
+    .delete-all-btn {
+      background-color: var(--danger);
+      color: white;
+      margin-left: 10px;
+    }
+
+    .delete-btn {
+      background-color: var(--danger);
+      color: white;
+      padding: 6px 12px;
+      font-size: 12px;
+      border-radius: 6px;
+    }
+
+    .logout-btn {
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid var(--text-secondary);
+      margin-left: 10px;
+    }
+
+    .logout-btn:hover {
+      background: var(--text-secondary);
+      color: var(--bg-dark);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(113, 39, 255, 0.2);
+    }
+
+    .status {
+      margin-bottom: 16px;
+      font-size: 14px;
+      color: var(--text-secondary);
+      padding: 0 20px;
+    }
+
+    .messages-table-container {
+      background-color: var(--bg-card);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 0 30px rgba(113, 39, 255, 0.1);
+      overflow-x: auto;
+    }
+
+    .messages-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .messages-table th {
+      text-align: left;
+      padding: 12px 16px;
+      color: var(--text-secondary);
+      font-weight: 600;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .messages-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .messages-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .messages-table tr:hover {
+      background-color: rgba(255, 255, 255, 0.02);
+    }
+
+    .message-id {
+      font-family: monospace;
+      color: var(--accent-purple);
+    }
+
+    .message-content {
+      max-width: 300px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .message-date {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-secondary);
+    }
+
+    .error {
+      background-color: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      padding: 16px;
+      border-radius: 12px;
+      color: var(--danger);
+      margin: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .messages-table-container {
+        padding: 10px;
+      }
+      
+      .messages-table th,
+      .messages-table td {
+        padding: 8px 12px;
+      }
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal {
+      background-color: var(--bg-card);
+      border-radius: 20px;
+      padding: 30px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+      box-shadow: 0 0 30px rgba(113, 39, 255, 0.2);
+    }
+
+    .modal-overlay.active .modal {
+      transform: translateY(0);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 24px;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+
+    .modal-close:hover {
+      color: var(--text-primary);
+    }
+
+    .modal-header {
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .modal-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 10px;
+    }
+
+    .modal-subtitle {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+    }
+
+    .modal-content {
+      margin-bottom: 20px;
+    }
+
+    .modal-field {
+      margin-bottom: 15px;
+    }
+
+    .modal-label {
+      display: block;
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      margin-bottom: 5px;
+    }
+
+    .modal-value {
+      color: var(--text-primary);
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
+    .modal-message {
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Make table rows clickable */
+    .messages-table tr {
+      cursor: pointer;
+    }
+
+    .messages-table tr:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Messages Dashboard</h1>
+      <div>
+        <button id="refreshButton" class="btn refresh-btn">Refresh</button>
+        <button id="deleteAllButton" class="btn delete-all-btn">Delete All</button>
+        <button id="logoutButton" class="btn logout-btn">Logout</button>
+      </div>
+    </header>
+    
+    <div id="errorDisplay" class="error" style="display: none;"></div>
+    
+    <div id="statusDisplay" class="status">Loading messages...</div>
+    
+    <div class="messages-table-container">
+      <table class="messages-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Message</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="messagesContainer">
+          <tr>
+            <td colspan="6" class="loading">Loading messages...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal Template -->
+  <div class="modal-overlay" id="messageModal">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+      <div class="modal-header">
+        <h2 class="modal-title">Message Details</h2>
+        <div class="modal-subtitle">ID: <span id="modalId"></span></div>
+      </div>
+      <div class="modal-content">
+        <div class="modal-field">
+          <span class="modal-label">Name</span>
+          <div class="modal-value" id="modalName"></div>
+        </div>
+        <div class="modal-field">
+          <span class="modal-label">Email</span>
+          <div class="modal-value" id="modalEmail"></div>
+        </div>
+        <div class="modal-field">
+          <span class="modal-label">Message</span>
+          <div class="modal-value modal-message" id="modalMessage"></div>
+        </div>
+        <div class="modal-field">
+          <span class="modal-label">Date</span>
+          <div class="modal-value" id="modalDate"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn delete-btn" id="modalDeleteBtn">Delete Message</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Check authentication
+    if (!sessionStorage.getItem('authenticated')) {
+      window.location.href = 'auth.html';
+    }
+
+    // Initialize Supabase client using the global constructor from the UMD build
+    const supabaseUrl = 'https://pfulfohqxvmgygnpzhpl.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBmdWxmb2hxeHZtZ3lnbnB6aHBsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ3MTI1ODksImV4cCI6MjA2MDI4ODU4OX0.5_itajWFlTX1m3bDFYSjLXTPkz_T9cOx6jOAUOuEyLM';
+    const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+    // Global DOM elements
+    let messagesContainer;
+    let statusDisplay;
+    let errorDisplay;
+
+    // Format date for display
+    function formatDate(dateString) {
+      const date = new Date(dateString);
+      return date.toLocaleString();
+    }
+    
+    // Truncate text if it's too long
+    function truncateText(text, maxLength = 150) {
+      if (!text) return '';
+      if (text.length <= maxLength) return text;
+      return text.substring(0, maxLength) + '...';
+    }
+
+    // Modal functionality
+    let currentMessageId = null;
+    const modal = document.getElementById('messageModal');
+    const modalId = document.getElementById('modalId');
+    const modalName = document.getElementById('modalName');
+    const modalEmail = document.getElementById('modalEmail');
+    const modalMessage = document.getElementById('modalMessage');
+    const modalDate = document.getElementById('modalDate');
+    const modalDeleteBtn = document.getElementById('modalDeleteBtn');
+
+    function openModal(message) {
+      currentMessageId = message.id;
+      modalId.textContent = `#${message.id}`;
+      modalName.textContent = message.name || 'N/A';
+      modalEmail.textContent = message.email || 'N/A';
+      modalMessage.textContent = message.message || 'N/A';
+      modalDate.textContent = formatDate(message.created_at);
+      modal.classList.add('active');
+    }
+
+    function closeModal() {
+      modal.classList.remove('active');
+      currentMessageId = null;
+    }
+
+    // Close modal when clicking outside
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        closeModal();
+      }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.classList.contains('active')) {
+        closeModal();
+      }
+    });
+
+    // Display messages in the UI
+    function displayMessages(messages) {
+      if (!messages || messages.length === 0) {
+        messagesContainer.innerHTML = '<tr><td colspan="6" class="loading">No messages found</td></tr>';
+        return;
+      }
+      
+      messagesContainer.innerHTML = '';
+      
+      messages.forEach(message => {
+        const row = document.createElement('tr');
+        
+        row.innerHTML = `
+          <td class="message-id">#${message.id}</td>
+          <td>${message.name || 'N/A'}</td>
+          <td>${message.email || 'N/A'}</td>
+          <td class="message-content" title="${message.message || ''}">${truncateText(message.message) || 'N/A'}</td>
+          <td class="message-date">${formatDate(message.created_at)}</td>
+          <td>
+            <button class="btn delete-btn" onclick="deleteMessageById('${message.id}')">Delete</button>
+          </td>
+        `;
+        
+        // Add click event to open modal
+        row.addEventListener('click', (e) => {
+          // Don't open modal if clicking the delete button
+          if (!e.target.closest('.delete-btn')) {
+            openModal(message);
+          }
+        });
+        
+        messagesContainer.appendChild(row);
+      });
+    }
+
+    // Fetch messages from Supabase
+    async function fetchMessages() {
+      try {
+        errorDisplay.style.display = 'none';
+        statusDisplay.textContent = 'Loading messages...';
+        messagesContainer.innerHTML = '<tr><td colspan="6" class="loading">Loading messages...</td></tr>';
+        
+        const { data, error } = await supabaseClient
+          .from('message')
+          .select('*')
+          .order('created_at', { ascending: false });
+          
+        if (error) {
+          throw error;
+        }
+        
+        displayMessages(data);
+        statusDisplay.textContent = `${data.length} messages found • Last updated: ${new Date().toLocaleString()}`;
+      } catch (error) {
+        console.error('Error fetching messages:', error);
+        errorDisplay.textContent = `Error fetching messages: ${error.message || error}`;
+        errorDisplay.style.display = 'block';
+        messagesContainer.innerHTML = '';
+        statusDisplay.textContent = 'Failed to load messages';
+      }
+    }
+
+    // Global functions for message operations
+    async function deleteMessageById(id) {
+      try {
+        const { data, error } = await supabaseClient
+          .from('message')
+          .delete()
+          .eq('id', id);
+          
+        if (error) {
+          console.error('Delete error:', error);
+          errorDisplay.textContent = `Error deleting message: ${error.message || error}`;
+          errorDisplay.style.display = 'block';
+        } else {
+          console.log('Deleted message:', data);
+          await fetchMessages();
+        }
+      } catch (error) {
+        console.error('Error in deleteMessageById:', error);
+        errorDisplay.textContent = `Error deleting message: ${error.message || error}`;
+        errorDisplay.style.display = 'block';
+      }
+    }
+    
+    async function deleteAllMessages() {
+      if (!confirm('Are you sure you want to delete all messages? This action cannot be undone.')) {
+        return;
+      }
+      
+      try {
+        const { data, error } = await supabaseClient
+          .from('message')
+          .delete()
+          .neq('id', ''); // Deletes everything since every id is not equal to empty
+        
+        if (error) {
+          console.error('Delete all error:', error);
+          errorDisplay.textContent = `Error deleting all messages: ${error.message || error}`;
+          errorDisplay.style.display = 'block';
+        } else {
+          console.log('All messages deleted:', data);
+          await fetchMessages();
+        }
+      } catch (error) {
+        console.error('Error in deleteAllMessages:', error);
+        errorDisplay.textContent = `Error deleting all messages: ${error.message || error}`;
+        errorDisplay.style.display = 'block';
+      }
+    }
+
+    function handleLogout() {
+      sessionStorage.removeItem('authenticated');
+      window.location.href = 'auth.html';
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize DOM elements
+      messagesContainer = document.getElementById('messagesContainer');
+      statusDisplay = document.getElementById('statusDisplay');
+      errorDisplay = document.getElementById('errorDisplay');
+      const refreshButton = document.getElementById('refreshButton');
+      const deleteAllButton = document.getElementById('deleteAllButton');
+      const logoutButton = document.getElementById('logoutButton');
+      
+      // Event listeners
+      refreshButton.addEventListener('click', fetchMessages);
+      deleteAllButton.addEventListener('click', deleteAllMessages);
+      logoutButton.addEventListener('click', handleLogout);
+      
+      // Initial data load
+      fetchMessages();
+    });
+
+    // Update modal delete button functionality
+    modalDeleteBtn.addEventListener('click', async () => {
+      if (currentMessageId) {
+        await deleteMessageById(currentMessageId);
+        closeModal();
+      }
+    });
+  </script>
+</body>
+</html>
