@@ -372,214 +372,155 @@
   </div>
 
   <script>
-    // Check authentication
-    if (!sessionStorage.getItem('authenticated')) {
-      window.location.href = 'auth.html';
-    }
-
-    // Initialize Supabase client using the global constructor from the UMD build
-    const supabaseUrl = 'https://pfulfohqxvmgygnpzhpl.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBmdWxmb2hxeHZtZ3lnbnB6aHBsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ3MTI1ODksImV4cCI6MjA2MDI4ODU4OX0.5_itajWFlTX1m3bDFYSjLXTPkz_T9cOx6jOAUOuEyLM';
-    const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
-
-    // Global DOM elements
-    let messagesContainer;
-    let statusDisplay;
-    let errorDisplay;
-
-    // Format date for display
-    function formatDate(dateString) {
-      const date = new Date(dateString);
-      return date.toLocaleString();
-    }
-    
-    // Truncate text if it's too long
-    function truncateText(text, maxLength = 150) {
-      if (!text) return '';
-      if (text.length <= maxLength) return text;
-      return text.substring(0, maxLength) + '...';
-    }
-
-    // Modal functionality
-    let currentMessageId = null;
-    const modal = document.getElementById('messageModal');
-    const modalId = document.getElementById('modalId');
-    const modalName = document.getElementById('modalName');
-    const modalEmail = document.getElementById('modalEmail');
-    const modalMessage = document.getElementById('modalMessage');
-    const modalDate = document.getElementById('modalDate');
-    const modalDeleteBtn = document.getElementById('modalDeleteBtn');
-
-    function openModal(message) {
-      currentMessageId = message.id;
-      modalId.textContent = `#${message.id}`;
-      modalName.textContent = message.name || 'N/A';
-      modalEmail.textContent = message.email || 'N/A';
-      modalMessage.textContent = message.message || 'N/A';
-      modalDate.textContent = formatDate(message.created_at);
-      modal.classList.add('active');
-    }
-
-    function closeModal() {
-      modal.classList.remove('active');
-      currentMessageId = null;
-    }
-
-    // Close modal when clicking outside
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) {
-        closeModal();
-      }
-    });
-
-    // Close modal with Escape key
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && modal.classList.contains('active')) {
-        closeModal();
-      }
-    });
-
-    // Display messages in the UI
-    function displayMessages(messages) {
-      if (!messages || messages.length === 0) {
-        messagesContainer.innerHTML = '<tr><td colspan="6" class="loading">No messages found</td></tr>';
-        return;
-      }
-      
-      messagesContainer.innerHTML = '';
-      
-      messages.forEach(message => {
-        const row = document.createElement('tr');
+        <script>
+        // API Configuration
+        const API_BASE_URL = 'https://ahnaf-portfolio.ahnafrahatifty.workers.dev';
         
-        row.innerHTML = `
-          <td class="message-id">#${message.id}</td>
-          <td>${message.name || 'N/A'}</td>
-          <td>${message.email || 'N/A'}</td>
-          <td class="message-content" title="${message.message || ''}">${truncateText(message.message) || 'N/A'}</td>
-          <td class="message-date">${formatDate(message.created_at)}</td>
-          <td>
-            <button class="btn delete-btn" onclick="deleteMessageById('${message.id}')">Delete</button>
-          </td>
-        `;
+        // Check authentication
+        if (!sessionStorage.getItem('authenticated')) {
+            window.location.href = 'auth.html';
+        }
+
+        let messagesContainer, statusDisplay, errorDisplay;
+
+        // Display messages in the table
+        function displayMessages(messages) {
+            messagesContainer.innerHTML = '';
+            
+            if (messages.length === 0) {
+                messagesContainer.innerHTML = '<tr><td colspan="6" class="no-messages">No messages found</td></tr>';
+                return;
+            }
+            
+            messages.forEach(message => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${message.name}</td>
+                    <td>${message.email}</td>
+                    <td>${message.message}</td>
+                    <td>${message.ip_address || 'N/A'}</td>
+                    <td>${new Date(message.created_at).toLocaleString()}</td>
+                    <td>
+                        <button onclick="deleteMessageById(${message.id})" class="delete-btn">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                
+                messagesContainer.appendChild(row);
+            });
+        }
+
+        // Fetch messages from API
+        async function fetchMessages() {
+            try {
+                errorDisplay.style.display = 'none';
+                statusDisplay.textContent = 'Loading messages...';
+                messagesContainer.innerHTML = '<tr><td colspan="6" class="loading">Loading messages...</td></tr>';
+                
+                const response = await fetch(`${API_BASE_URL}/api/messages`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                displayMessages(data);
+                statusDisplay.textContent = `${data.length} messages found • Last updated: ${new Date().toLocaleString()}`;
+            } catch (error) {
+                console.error('Error fetching messages:', error);
+                errorDisplay.textContent = `Error fetching messages: ${error.message || error}`;
+                errorDisplay.style.display = 'block';
+                messagesContainer.innerHTML = '';
+                statusDisplay.textContent = 'Failed to load messages';
+            }
+        }
+
+        // Global functions for message operations
+        async function deleteMessageById(id) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/messages/delete`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ id })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    console.log('Message deleted successfully');
+                    await fetchMessages();
+                } else {
+                    throw new Error(result.message || 'Failed to delete message');
+                }
+            } catch (error) {
+                console.error('Error in deleteMessageById:', error);
+                errorDisplay.textContent = `Error deleting message: ${error.message || error}`;
+                errorDisplay.style.display = 'block';
+            }
+        }
         
-        // Add click event to open modal
-        row.addEventListener('click', (e) => {
-          // Don't open modal if clicking the delete button
-          if (!e.target.closest('.delete-btn')) {
-            openModal(message);
-          }
+        async function deleteAllMessages() {
+            if (!confirm('Are you sure you want to delete all messages? This action cannot be undone.')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/messages/delete-all`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    console.log('All messages deleted successfully');
+                    await fetchMessages();
+                } else {
+                    throw new Error(result.message || 'Failed to delete all messages');
+                }
+            } catch (error) {
+                console.error('Error in deleteAllMessages:', error);
+                errorDisplay.textContent = `Error deleting all messages: ${error.message || error}`;
+                errorDisplay.style.display = 'block';
+            }
+        }
+
+        function handleLogout() {
+            sessionStorage.removeItem('authenticated');
+            sessionStorage.removeItem('authToken');
+            window.location.href = 'auth.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize DOM elements
+            messagesContainer = document.getElementById('messagesContainer');
+            statusDisplay = document.getElementById('statusDisplay');
+            errorDisplay = document.getElementById('errorDisplay');
+            const refreshButton = document.getElementById('refreshButton');
+            const deleteAllButton = document.getElementById('deleteAllButton');
+            const logoutButton = document.getElementById('logoutButton');
+            
+            // Event listeners
+            refreshButton.addEventListener('click', fetchMessages);
+            deleteAllButton.addEventListener('click', deleteAllMessages);
+            logoutButton.addEventListener('click', handleLogout);
+            
+            // Load messages on page load
+            fetchMessages();
         });
-        
-        messagesContainer.appendChild(row);
-      });
-    }
-
-    // Fetch messages from Supabase
-    async function fetchMessages() {
-      try {
-        errorDisplay.style.display = 'none';
-        statusDisplay.textContent = 'Loading messages...';
-        messagesContainer.innerHTML = '<tr><td colspan="6" class="loading">Loading messages...</td></tr>';
-        
-        const { data, error } = await supabaseClient
-          .from('message')
-          .select('*')
-          .order('created_at', { ascending: false });
-          
-        if (error) {
-          throw error;
-        }
-        
-        displayMessages(data);
-        statusDisplay.textContent = `${data.length} messages found • Last updated: ${new Date().toLocaleString()}`;
-      } catch (error) {
-        console.error('Error fetching messages:', error);
-        errorDisplay.textContent = `Error fetching messages: ${error.message || error}`;
-        errorDisplay.style.display = 'block';
-        messagesContainer.innerHTML = '';
-        statusDisplay.textContent = 'Failed to load messages';
-      }
-    }
-
-    // Global functions for message operations
-    async function deleteMessageById(id) {
-      try {
-        const { data, error } = await supabaseClient
-          .from('message')
-          .delete()
-          .eq('id', id);
-          
-        if (error) {
-          console.error('Delete error:', error);
-          errorDisplay.textContent = `Error deleting message: ${error.message || error}`;
-          errorDisplay.style.display = 'block';
-        } else {
-          console.log('Deleted message:', data);
-          await fetchMessages();
-        }
-      } catch (error) {
-        console.error('Error in deleteMessageById:', error);
-        errorDisplay.textContent = `Error deleting message: ${error.message || error}`;
-        errorDisplay.style.display = 'block';
-      }
-    }
-    
-    async function deleteAllMessages() {
-      if (!confirm('Are you sure you want to delete all messages? This action cannot be undone.')) {
-        return;
-      }
-      
-      try {
-        const { data, error } = await supabaseClient
-          .from('message')
-          .delete()
-          .neq('id', ''); // Deletes everything since every id is not equal to empty
-        
-        if (error) {
-          console.error('Delete all error:', error);
-          errorDisplay.textContent = `Error deleting all messages: ${error.message || error}`;
-          errorDisplay.style.display = 'block';
-        } else {
-          console.log('All messages deleted:', data);
-          await fetchMessages();
-        }
-      } catch (error) {
-        console.error('Error in deleteAllMessages:', error);
-        errorDisplay.textContent = `Error deleting all messages: ${error.message || error}`;
-        errorDisplay.style.display = 'block';
-      }
-    }
-
-    function handleLogout() {
-      sessionStorage.removeItem('authenticated');
-      window.location.href = 'auth.html';
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-      // Initialize DOM elements
-      messagesContainer = document.getElementById('messagesContainer');
-      statusDisplay = document.getElementById('statusDisplay');
-      errorDisplay = document.getElementById('errorDisplay');
-      const refreshButton = document.getElementById('refreshButton');
-      const deleteAllButton = document.getElementById('deleteAllButton');
-      const logoutButton = document.getElementById('logoutButton');
-      
-      // Event listeners
-      refreshButton.addEventListener('click', fetchMessages);
-      deleteAllButton.addEventListener('click', deleteAllMessages);
-      logoutButton.addEventListener('click', handleLogout);
-      
-      // Initial data load
-      fetchMessages();
-    });
-
-    // Update modal delete button functionality
-    modalDeleteBtn.addEventListener('click', async () => {
-      if (currentMessageId) {
-        await deleteMessageById(currentMessageId);
-        closeModal();
-      }
-    });
-  </script>
+    </script>
 </body>
 </html>
