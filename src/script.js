@@ -8,10 +8,7 @@ const projectsGrid = document.getElementById('projects-grid');
 
 // Typewriter effect
 const typewriterWords = [
-  'an iOS Developer',
-  'a Software Engineer', 
-  'an AI Enthusiast',
-  'a Problem Solver'
+  'an iOS Enthusiast', 'a Full Stack Developer', "a Mobile ML Expert"
 ];
 
 let wordIndex = 0;
@@ -441,3 +438,4 @@ revealSections.forEach(section => {
   section.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
   revealObserver.observe(section);
 });
+

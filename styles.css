@@ -194,25 +194,7 @@ nav {
                blink-caret 0.75s step-end infinite;
 }
 
-.typewriter::before {
-    content: "an iOS Enthusiast";
-    animation: rotate-text 12s linear infinite;
-}
 
-@keyframes rotate-text {
-    0%, 25% {
-        content: "an iOS Enthusiast";
-    }
-    33%, 58% {
-        content: "a Backend Developer";
-    }
-    66%, 91% {
-        content: "a Mobile ML Expert";
-    }
-    100% {
-        content: "an iOS Enthusiast";
-    }
-}
 
 @keyframes typing {
     from { width: 0 }

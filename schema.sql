@@ -41,3 +41,4 @@ INSERT INTO projects (title, description, image_url, tags, project_url, github_u
 ('AI Website Summarizer', 'Professional Python application that extracts content from websites and generates summaries using OpenAI API or Ollama.', '/assets/ai_summary_banner.png', 'Python,Flask,OpenAI,Ollama', NULL, 'https://github.com/ahnafrahat/ai_website_summary', 0),
 ('Sokoni Kwetu', 'E-Commerce app built using Swift and integrated with Firebase Authentication, Firestore, and REST APIs.', '/assets/sokoni_banner.png', 'iOS,Firebase,E-Commerce', 'https://apps.apple.com/us/app/sokoni-kwetu/id1482431769', NULL, 0),
 ('Mackspice', 'Sustainable spice farming and production brand iOS app for rural smallholder farmers.', '/assets/mackspice_banner.png', 'iOS,E-Commerce,Sustainability', 'https://apps.apple.com/us/app/mackspice/id1590196517', NULL, 0);
+
